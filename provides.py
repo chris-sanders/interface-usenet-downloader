@@ -14,13 +14,15 @@ class UsenetDownloaderProvides(RelationBase):
 
     @hook('{provides:usenet-downloader}-relation-{joined,changed}')
     def changed(self):
-        log('{provides:usenet-downloader}-relation-{joined,changed}','INFO')
+        log('provides:usenet-downloader.triggered','INFO')
         self.set_state('{relation_name}.available')
         self.set_state('{relation_name}.triggered')
 
     @hook('{provides:usenet-downloader}-relation-{departed}')
     def departed(self):
         self.remove_state('{relation_name}.available')
+        self.remove_state('{relation_name}.configured')
+        log('Removed usenet-downloader.configured','INFO')
 
     def configure(self,hostname,port,apikey):
         relation_info = {
@@ -30,4 +32,4 @@ class UsenetDownloaderProvides(RelationBase):
              }
         self.set_remote(**relation_info)
         self.set_state('{relation_name}.configured')
-        log('{relation_name}.configured','INFO')
+        log('usenet-downloader.configured','INFO')

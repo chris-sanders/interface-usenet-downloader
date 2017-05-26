@@ -15,11 +15,11 @@ class UsenetDownloaderRequires(RelationBase):
 
     @hook('{requires:usenet-downloader}-relation-{joined,changed}')
     def changed(self):
-        log('{relation_name}.triggered','INFO')
-        self.set_state('{relation_name}.triggered')
+        log('usenet-downloader.available','INFO')
+        self.set_state('{relation_name}.available')
         if self.hostname() and self.port() and self.apikey():
-            log('{relation_name}.available','INFO')
-            self.set_state('{relation_name}.available')
+            log('usenet-downloader.triggered','INFO')
+            self.set_state('{relation_name}.triggered')
             if self.hostname() != self.get_local('hostname') or\
                self.port() != self.get_local('port') or \
                self.apikey() != self.get_local('apikey'):
@@ -31,5 +31,7 @@ class UsenetDownloaderRequires(RelationBase):
     @hook('{requires:usenet-downloader}-relation-{departed}')
     def departed(self):
         self.remove_state('{relation_name}.available')
+        self.remove_state('{relation_name}.configured')
+        log('Removed usenet-downloader.configured','INFO')
 
 
