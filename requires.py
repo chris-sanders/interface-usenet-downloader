@@ -34,4 +34,5 @@ class UsenetDownloaderRequires(RelationBase):
         self.remove_state('{relation_name}.configured')
         log('Removed usenet-downloader.configured','INFO')
 
-
+    def configured(self):
+        self.set_state('{relation_name}.configured')

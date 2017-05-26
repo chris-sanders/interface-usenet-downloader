@@ -14,7 +14,7 @@ class UsenetDownloaderProvides(RelationBase):
 
     @hook('{provides:usenet-downloader}-relation-{joined,changed}')
     def changed(self):
-        log('provides:usenet-downloader.triggered','INFO')
+        log('usenet-downloader.triggered','INFO')
         self.set_state('{relation_name}.available')
         self.set_state('{relation_name}.triggered')
 
