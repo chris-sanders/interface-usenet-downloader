@@ -2,7 +2,8 @@ from charms.reactive import RelationBase
 from charms.reactive import scopes
 from charms.reactive import hook
 from charms.reactive import when
-import socket
+from charmhelpers.core import hookenv
+from charmhelpers.core.hookenv import log
 
 class UsenetDownloaderRequires(RelationBase):
     scope = scopes.GLOBAL
@@ -10,12 +11,14 @@ class UsenetDownloaderRequires(RelationBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        hookenv.atexit(lambda: self.remove_state(self.states.triggered))
+        hookenv.atexit(lambda: self.remove_state('{relation_name}.triggered'))
 
-    @hook('{requires:usenetdownloader}-relation-{joined,changed}')
+    @hook('{requires:usenet-downloader}-relation-{joined,changed}')
     def changed(self):
+        log('{relation_name}.triggered','INFO')
         self.set_state('{relation_name}.triggered')
         if self.hostname() and self.port() and self.apikey():
+            log('{relation_name}.available','INFO')
             self.set_state('{relation_name}.available')
             if self.hostname() != self.get_local('hostname') or\
                self.port() != self.get_local('port') or \
@@ -25,7 +28,7 @@ class UsenetDownloaderRequires(RelationBase):
                 self.set_local('apikey',self.apikey())
                 self.remove_state('{relation_name}.configured')
 
-    @hook('{requires:salt}-relation-{departed}')
+    @hook('{requires:usenet-downloader}-relation-{departed}')
     def departed(self):
         self.remove_state('{relation_name}.available')
 
